@@ -18,6 +18,24 @@ public class EntryService {
         return entryRepository.saveAndFlush(entry);
     }
 
+    public Boolean deleteEntry(long entryId) {
+        if (entryRepository.existsById(entryId)) {
+            entryRepository.deleteById(entryId);
+            return true;
+        }
+        return false;
+    }
+
+    public Entry updateEntry(long entryId, Entry entry) {
+        if (entry.getId() == entryId) {
+            if (entryRepository.existsById(entryId)) {
+                entryRepository.deleteById(entryId);
+                return entryRepository.saveAndFlush(entry);
+            }
+        }
+        return null;
+    }
+
     public List<Entry> findAll() {
         return entryRepository.findAll();
     }

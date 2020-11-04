@@ -9,8 +9,24 @@ const createEntry = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const entry = {};
-    entry['checkIn'] = dateAndTimeToDate(formData.get('checkInDate'), formData.get('checkInTime'));
-    entry['checkOut'] = dateAndTimeToDate(formData.get('checkOutDate'), formData.get('checkOutTime'));
+    let checkInDate = formData.get('checkInDate');
+    let checkOutDate = formData.get('checkOutDate');
+
+    if (new Date(checkOutDate).getTime() < new Date(checkInDate).getTime()) {
+        alert('Input Date exceeds Output Date.')
+        return;
+    }
+
+    let checkInTime = formData.get('checkInTime');
+    let checkOutTime = formData.get('checkOutTime');
+
+    if (new Date(`0000-01-01 ${checkOutTime}`).getTime() < new Date(`0000-01-01 ${checkInTime}`)) {
+        alert('Input Time exceeds Output Time.')
+        return;
+    }
+
+    entry['checkIn'] = dateAndTimeToDate(checkInDate, checkInTime);
+    entry['checkOut'] = dateAndTimeToDate(checkOutDate, checkOutTime);
 
     fetch(`${URL}/entries`, {
         method: 'POST',
@@ -25,6 +41,18 @@ const createEntry = (e) => {
         });
     });
 };
+
+const deleteEntry = (entryId) => {
+    if (confirm('Bist du dir sicher?')) {
+        fetch(`${URL}/entries/${entryId}`, {method: 'DELETE'})
+            .then((response) => {
+                if (response.status === 200) {
+                    entries = entries.filter((el1) => el1.id !== entryId);
+                    renderEntries();
+                }
+            });
+    }
+}
 
 const indexEntries = () => {
     fetch(`${URL}/entries`, {
@@ -52,6 +80,10 @@ const renderEntries = () => {
         row.appendChild(createCell(entry.id));
         row.appendChild(createCell(new Date(entry.checkIn).toLocaleString()));
         row.appendChild(createCell(new Date(entry.checkOut).toLocaleString()));
+        const deleteButton = document.createElement('button');
+        deleteButton.innerText = "Löschen";
+        deleteButton.onclick = () => deleteEntry(entry.id);
+        row.appendChild(document.createElement('td').appendChild(deleteButton));
         display.appendChild(row);
     });
 };
