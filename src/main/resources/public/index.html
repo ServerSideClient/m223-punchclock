@@ -11,12 +11,12 @@
     </head>
     <body>
         <form id="createEntryForm">
-            <label for="checkIn">Check in</label>
-            <input type="date" name="checkInDate" id="checkIn" required>
-            <input type="time" name="checkInTime" required>
-            <label for="checkOut">Check out</label>
-            <input type="date" name="checkOutDate" id="checkOut" required>
-            <input type="time" name="checkOutTime" required>
+            <label for="checkInDate">Check in</label>
+            <input type="date" name="checkInDate" id="checkInDate" required>
+            <input type="time" name="checkInTime" id="checkInTime" required>
+            <label for="checkOutDate">Check out</label>
+            <input type="date" name="checkOutDate" id="checkOutDate" required>
+            <input type="time" name="checkOutTime" id="checkOutTime" required>
             <input type="submit" value="Save" />
         </form>
         <table>
@@ -25,6 +25,8 @@
                     <th>ID</th>
                     <th>Check in</th>
                     <th>Check out</th>
+                    <th></th>
+                    <th></th>
                     <th></th>
                 </tr>
             </thead>
