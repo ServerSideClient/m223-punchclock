@@ -13,20 +13,23 @@ const createEntry = (e) => {
     let checkOutDate = formData.get('checkOutDate');
 
     if (new Date(checkOutDate).getTime() < new Date(checkInDate).getTime()) {
-        alert('Input Date exceeds Output Date.')
+        alert('Eingabedatum überschreitet Ausgabedatum.')
         return;
     }
 
     let checkInTime = formData.get('checkInTime');
     let checkOutTime = formData.get('checkOutTime');
 
-    if (new Date(`0000-01-01 ${checkOutTime}`).getTime() < new Date(`0000-01-01 ${checkInTime}`)) {
-        alert('Input Time exceeds Output Time.')
+    let checkInDateTime = dateAndTimeToDate(checkInDate, checkInTime);
+    let checkOutDateTime = dateAndTimeToDate(checkOutDate, checkOutTime);
+
+    if (Date.parse(checkOutDateTime) < Date.parse(checkInDateTime)) {
+        alert('Eingabezeit überschreitet Ausgabezeit.');
         return;
     }
 
-    entry['checkIn'] = dateAndTimeToDate(checkInDate, checkInTime);
-    entry['checkOut'] = dateAndTimeToDate(checkOutDate, checkOutTime);
+    entry['checkIn'] = checkInDateTime;
+    entry['checkOut'] = checkOutDateTime;
 
     fetch(`${URL}/entries`, {
         method: 'POST',
