@@ -84,7 +84,8 @@ const updateEntry = (entry) => {
                     return value;
                 });
             }
-        })
+        });
+    mode = createMode;
 }
 
 const toggleEditEntry = (arrayIndex) => {
