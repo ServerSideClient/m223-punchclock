@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -16,6 +17,10 @@ public class EntryController {
 
     public EntryController(EntryService entryService) {
         this.entryService = entryService;
+        Entry initEntry = new Entry();
+        initEntry.setCheckIn(LocalDateTime.now().minusDays(1));
+        initEntry.setCheckOut(LocalDateTime.now());
+        entryService.createEntry(initEntry);
     }
 
     @GetMapping
