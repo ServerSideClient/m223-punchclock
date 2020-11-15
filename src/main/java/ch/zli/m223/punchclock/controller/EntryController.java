@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
-import java.time.LocalDateTime;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -17,36 +17,35 @@ public class EntryController {
 
     public EntryController(EntryService entryService) {
         this.entryService = entryService;
-        Entry initEntry = new Entry();
-        initEntry.setCheckIn(LocalDateTime.now().minusDays(1));
-        initEntry.setCheckOut(LocalDateTime.now());
-        entryService.createEntry(initEntry);
     }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Entry> getAllEntries() {
-        return entryService.findAll();
+    public List<Entry> getAllEntries(Principal user) {
+        List<Entry> entries = entryService.findAll(user.getName());
+        // Remove user details as a security precaution
+        entries.forEach((entry -> entry.setUser(null)));
+        return entries;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Entry createEntry(@Valid @RequestBody Entry entry) {
-        return entryService.createEntry(entry);
+    public Entry createEntry(Principal user, @Valid @RequestBody Entry entry) {
+        return entryService.createEntry(user.getName(), entry);
     }
 
     @RequestMapping(value = "/{entryId}", method = RequestMethod.DELETE)
     @ResponseStatus(HttpStatus.OK)
-    public void deleteEntry(@Valid @PathVariable long entryId) {
-        if (!entryService.deleteEntry(entryId)) {
+    public void deleteEntry(Principal user, @Valid @PathVariable long entryId) {
+        if (!entryService.deleteEntry(user.getName(), entryId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
     }
 
     @RequestMapping(value = "/{entryId}", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    public Entry updateEntry(@Valid @PathVariable long entryId, @Valid @RequestBody Entry entry) {
-        if (entryService.updateEntry(entryId, entry) == null) {
+    public Entry updateEntry(Principal user, @Valid @PathVariable long entryId, @Valid @RequestBody Entry entry) {
+        if (entryService.updateEntry(user.getName(), entryId, entry) == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
         return entry;

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public class Entry {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
@@ -60,4 +60,14 @@ public class Entry {
         this.category = category;
     }
 
+    public void setUser(PunchClockUser user) {
+        this.user = user;
+    }
+
+    public PunchClockUser getUser() {
+        return this.user;
+    }
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    public PunchClockUser user;
 }
