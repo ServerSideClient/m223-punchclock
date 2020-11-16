@@ -1,7 +1,6 @@
 package ch.zli.m223.punchclock.service;
 
 import ch.zli.m223.punchclock.domain.Entry;
-import ch.zli.m223.punchclock.domain.PunchClockUser;
 import ch.zli.m223.punchclock.repository.EntryRepository;
 import ch.zli.m223.punchclock.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -20,26 +19,22 @@ public class EntryService {
 
     public Entry createEntry(String username, Entry entry) {
         entry.setUser(userRepository.findByUsername(username));
-        Entry savedEntry = entryRepository.saveAndFlush(entry);
-        savedEntry.setUser(null);
-        return savedEntry;
+        return entryRepository.saveAndFlush(entry);
     }
 
     public Boolean deleteEntry(String username, long entryId) {
         if (entryRepository.existsById(entryId)) {
-            entryRepository.deleteDistinctByUser_UsernameAndId(username, entryId);
-            return true;
+            return entryRepository.deleteEntryByIdAndUser_Username(entryId, username) == 1;
         }
         return false;
     }
 
     public Entry updateEntry(String username, long entryId, Entry entry) {
-        entry.setId(entryId);
-        if (entryRepository.existsById(entryId) && entry.getUser().getUsername().equals(username)) {
+        if (entryRepository.existsById(entryId)) {
+            entry.setUser(userRepository.findByUsername(username));
+            entry.setId(entryId);
             entryRepository.deleteById(entryId);
-            Entry updatedEntry = entryRepository.saveAndFlush(entry);
-            updatedEntry.setUser(null);
-            return updatedEntry;
+            return entryRepository.saveAndFlush(entry);
         }
         return null;
     }

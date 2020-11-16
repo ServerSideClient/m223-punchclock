@@ -1,5 +1,6 @@
 package ch.zli.m223.punchclock.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -25,7 +26,7 @@ public class Entry {
     @Column(nullable = false)
     private LocalDateTime checkOut;
 
-    @ManyToOne(targetEntity = Category.class, cascade = CascadeType.REMOVE)
+    @ManyToOne(targetEntity = Category.class)
     private Category category;
 
     public Long getId() {
@@ -69,5 +70,6 @@ public class Entry {
     }
 
     @ManyToOne(fetch = FetchType.EAGER)
+    @JsonIgnore
     public PunchClockUser user;
 }
